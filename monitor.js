@@ -1,7 +1,7 @@
 const os = require("os");
 const db = require("./db");
 
-// Helper: snapshot CPU
+// Snapshot CPU times
 function getCpuInfo() {
   const cpus = os.cpus();
   let idle = 0;
@@ -55,4 +55,4 @@ async function recordVmMetrics() {
   );
 }
 
-module.exports = { recordVmMetrics };
+module.exports = { getCpuUsage, getMemoryUsage, recordVmMetrics };
