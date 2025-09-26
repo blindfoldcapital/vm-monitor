@@ -1,17 +1,21 @@
 const express = require("express");
 const db = require("./db");
 const { recordVmMetrics } = require("./monitor");
+const { startDashboard } = require("./dashboard");
 const cron = require("node-cron");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Collect every minute
+// Collect every minute into DB
 cron.schedule("* * * * *", () => {
   recordVmMetrics();
 });
 
-// Latest
+// Start live console dashboard (updates every 2s)
+startDashboard(2000);
+
+// API routes
 app.get("/api/vm/latest", (req, res) => {
   db.get(
     "SELECT * FROM vm_metrics ORDER BY timestamp DESC LIMIT 1",
@@ -22,7 +26,6 @@ app.get("/api/vm/latest", (req, res) => {
   );
 });
 
-// History (last 100)
 app.get("/api/vm/history", (req, res) => {
   db.all(
     "SELECT * FROM vm_metrics ORDER BY timestamp DESC LIMIT 100",
