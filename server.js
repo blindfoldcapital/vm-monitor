@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const db = require("./db");
 const { recordVmMetrics } = require("./monitor");
 const { startDashboard } = require("./dashboard");
@@ -6,6 +7,15 @@ const cron = require("node-cron");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// ✅ Enable CORS for localhost:3000 and blindfold.cloud
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://blindfold.cloud"],
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // Collect every minute into DB
 cron.schedule("* * * * *", () => {
